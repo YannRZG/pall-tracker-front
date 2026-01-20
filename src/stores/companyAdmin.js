@@ -14,6 +14,7 @@ export const useCompanyAdminStore = defineStore('companyAdmin', {
       this.loading = true
       try {
         const { data } = await api.get(`/companies/${companyId}/dashboard`)
+        console.log('data dashboard', data)
         this.company = data.company
         this.stats = data.stats
         this.users = data.users.filter(u => !u.deleted_at)

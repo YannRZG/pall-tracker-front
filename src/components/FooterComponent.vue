@@ -1,7 +1,5 @@
 <template>
-  <footer
-    class="flex justify-around items-center px-8 py-4 my-4 mx-5 mt-auto"
-  >
+  <footer class="flex justify-around items-center px-8 py-4 my-4 mx-5 mt-auto">
     <!-- LOGO -->
     <div class="flex items-center gap-3">
       <RouterLink
@@ -20,5 +18,18 @@
     >
       Contact
     </router-link>
+    <RouterLink
+      v-if="userStore.user?.super_admin"
+      to="/admin"
+      class="text-indigo-600 font-semibold"
+    >
+      Admin SaaS
+    </RouterLink>
   </footer>
 </template>
+
+<script setup>
+import { useUserStore } from '@/stores/user'
+
+const userStore = useUserStore()
+</script>

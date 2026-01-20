@@ -60,7 +60,7 @@
       <div class="text-center mt-6 text-sm text-gray-600">
         Pas encore de compte ?
         <router-link
-          to="/register"
+          to="/signup-request"
           class="text-indigo-600 hover:underline font-medium"
         >
           Inscrivez-vous
@@ -71,30 +71,32 @@
 </template>
 
 <script setup>
-import { ref } from 'vue'
-import { useRouter } from 'vue-router'
-import { useUserStore } from '@/stores/user'
+  import { ref } from 'vue'
+  import { useRouter } from 'vue-router'
+  import { useUserStore } from '@/stores/user'
 
-const email = ref('')
-const password = ref('')
-const router = useRouter()
-const userStore = useUserStore()
+  const email = ref('')
+  const password = ref('')
+  const router = useRouter()
+  const userStore = useUserStore()
 
-const handleLogin = async () => {
-  try {
-    await userStore.login({
-      user: {
-        email: email.value,
-        password: password.value,
-      },
-    })
+  const handleLogin = async () => {
+    try {
+      await userStore.login(email.value, password.value)
 
-    if (userStore.user) {
-      router.push('/dashboard')
+      // 🔹 Après fetchUser, store rempli
+      console.log('User store après login :', userStore.user)
+
+      // 🔹 Redirection selon rôle
+      if (userStore.user.super_admin) {
+        router.push({ name: 'admin-dashboard' })
+      } else if (userStore.user.role === 'admin') {
+        router.push({ name: 'profile' })
+      } else {
+        router.push({ name: 'dashboard' })
+      }
+    } catch (err) {
+      console.error('Erreur login:', err)
     }
-  } catch (err) {
-    console.error(err)
-    // 👀 tu peux aussi ajouter un toast ici
   }
-}
-</script>
+  </script>

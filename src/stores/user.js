@@ -1,19 +1,19 @@
 // userStore.js
 import { defineStore } from 'pinia'
 import api from '../axios'
-import { useUiStore } from '@/stores/ui'  // ✅ Import du store UI pour les toasts
+import { useUiStore } from '@/stores/ui' // ✅ Import du store UI pour les toasts
 
 export const useUserStore = defineStore('user', {
   state: () => ({
     user: null,
     loading: false,
-    error: null
+    error: null,
   }),
 
   actions: {
     // 🔹 Récupérer l'utilisateur connecté
     async fetchUser() {
-      const uiStore = useUiStore()  // 🔹 initialise le store pour les toasts
+      const uiStore = useUiStore() // 🔹 initialise le store pour les toasts
       this.loading = true
       try {
         const res = await api.get('/current_user') // ou '/profile'
@@ -24,10 +24,12 @@ export const useUserStore = defineStore('user', {
             id: u.id,
             email: u.email,
             role: u.role,
+            admin: u.admin,
+            super_admin: u.super_admin,
             company_id: u.company_id,
             company: u.company || null,
             first_name: u.first_name || '',
-            last_name: u.last_name || ''
+            last_name: u.last_name || '',
           }
         } else {
           this.user = null
@@ -39,7 +41,7 @@ export const useUserStore = defineStore('user', {
         this.user = null
         this.error = 'Impossible de récupérer l’utilisateur'
         console.error('Utilisateur non authentifié', err)
-        uiStore.showToast(this.error, 'error')  // 🔹 affichage toast erreur
+        uiStore.showToast(this.error, 'error') // 🔹 affichage toast erreur
       } finally {
         this.loading = false
       }
@@ -56,23 +58,30 @@ export const useUserStore = defineStore('user', {
 
         await this.fetchUser()
         this.error = null
-        uiStore.showToast('Inscription réussie ✅', 'success')  // 🔹 toast succès
+        uiStore.showToast('Inscription réussie ✅', 'success') // 🔹 toast succès
       } catch (err) {
         this.user = null
         this.error = 'Email ou mot de passe incorrect'
         console.error('Erreur lors de l’inscription', err)
-        uiStore.showToast(this.error, 'error')  // 🔹 toast erreur
+        uiStore.showToast(this.error, 'error') // 🔹 toast erreur
       } finally {
         this.loading = false
       }
     },
 
     // 🔹 Connexion
-    async login(credentials) {
+    async login(email, password) {
       const uiStore = useUiStore()
       this.loading = true
+
       try {
-        const res = await api.post('/users/sign_in', credentials)
+        const res = await api.post('/login', {
+          user: {
+            email,
+            password,
+          },
+        })
+
         const token = res.data.data?.token
         if (token) localStorage.setItem('token', token)
 
@@ -84,6 +93,7 @@ export const useUserStore = defineStore('user', {
         this.error = 'Email ou mot de passe incorrect'
         console.error('Erreur lors de la connexion', err)
         uiStore.showToast(this.error, 'error')
+        throw err
       } finally {
         this.loading = false
       }
@@ -92,22 +102,19 @@ export const useUserStore = defineStore('user', {
     // 🔹 Déconnexion
     async logout() {
       const uiStore = useUiStore()
+
       try {
-        const token = localStorage.getItem('token')
-        await api.delete('/users/sign_out', {
-          headers: { Authorization: `Bearer ${token}` }
-        })
-        localStorage.removeItem('token')
+        await api.delete('/logout') // ✅ rien d’autre
         this.user = null
-        this.error = null
         uiStore.showToast('Déconnexion réussie ✅', 'success')
       } catch (err) {
-        this.error = 'Erreur lors de la déconnexion'
         console.error('Erreur déconnexion', err)
-        uiStore.showToast(this.error, 'error')
+        uiStore.showToast('Erreur lors de la déconnexion', 'error')
       }
     }
+
+
   },
 
-  persist: true
+  persist: true,
 })

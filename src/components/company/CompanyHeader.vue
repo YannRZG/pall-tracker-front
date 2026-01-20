@@ -1,15 +1,17 @@
 <template>
-  <header class="p-4 bg-gray-100">
-    <h1>{{ company?.name || 'Chargement...' }}</h1>
-    <p>Nombre d'utilisateurs : {{ company?.users?.count || 0 }}</p>
+  <header class="p-4 space-y-4">
+    <h1 class="text-3xl font-bold">{{ company?.name || 'Chargement...' }}</h1>
+    <p class="text-sm"> {{ company?.role || '—' }}</p>
+    <p class="text-sm">Nombre d'utilisateurs : {{ usersCount || 0 }}</p>
   </header>
 </template>
 
 <script setup>
-defineProps({
-  company: {
-    type: Object,
-    default: () => null
-  }
-})
-</script>
+  defineProps({
+    company: Object,
+    usersCount: {
+      type: Number,
+      default: 0
+    }
+  })
+  </script>

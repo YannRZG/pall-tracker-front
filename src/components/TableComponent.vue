@@ -1,19 +1,17 @@
 <template>
-  <div class="p-6 space-y-6">
+  <div class="p-6">
     <!-- Top bar -->
     <div
       class="flex flex-col md:flex-row md:items-center md:justify-between gap-4 bg-white/80 backdrop-blur-md rounded-2xl p-4 shadow-lg shadow-indigo-600/10"
     >
-      <div>
+      <div class="flex items-center gap-4">
         <input
           v-model="searchQuery"
           type="text"
           placeholder="Rechercher..."
           class="w-full md:w-80 px-4 py-2 rounded-lg border border-gray-200 focus:outline-none focus:ring-2 focus:ring-indigo-500"
         />
-        <p class="text-xs text-gray-400 mt-1">
-          Rechercher par : semaine, date, référence…
-        </p>
+        <p class="text-xs text-gray-400 mt-1">Rechercher par : semaine, date, référence…</p>
       </div>
 
       <button
@@ -29,130 +27,99 @@
       v-if="filteredRecords.length"
       class="bg-white/90 backdrop-blur-md rounded-2xl shadow-xl shadow-indigo-600/10 overflow-x-auto"
     >
-      <!-- Pagination -->
-      <div class="flex items-center justify-center gap-3 p-4 border-b">
-        <button
-          @click="changePage(currentPage - 1)"
-          :disabled="currentPage === 1"
-          class="px-3 py-1 rounded-md bg-gray-100 hover:bg-gray-200 disabled:opacity-50"
-        >
-          ◀
-        </button>
+      <table class="w-full text-sm">
+        <thead class="bg-indigo-50 text-indigo-700 uppercase text-xs tracking-wide">
+          <tr>
+            <th class="p-3">Sem.</th>
+            <th class="p-3">Date</th>
+            <th class="p-3">Transport</th>
+            <th class="p-3">Chargement</th>
+            <th class="p-3 text-center">Chargées</th>
+            <th class="p-3 text-center">Rendues</th>
+            <th class="p-3 text-center">Dette ch.</th>
+            <th class="p-3">Transporteur</th>
+            <th class="p-3">Livraison</th>
+            <th class="p-3 text-center">Livrées</th>
+            <th class="p-3 text-center">Reprises</th>
+            <th class="p-3 text-center">Dette liv.</th>
+            <th class="p-3">Commentaire</th>
+            <th class="p-3 text-center">Actions</th>
+          </tr>
+        </thead>
 
-        <span class="text-sm font-medium text-gray-600">
-          Page {{ currentPage }} / {{ totalPages }}
-        </span>
+        <tbody>
+          <tr
+            v-for="(record, index) in paginatedRecords"
+            :key="record.id"
+            class="border-t border-indigo-100 hover:bg-indigo-50/60 transition-colors"
+          >
+            <td class="p-3">{{ record.week }}</td>
+            <td class="p-3">{{ formatDate(record.date) }}</td>
+            <td class="p-3">{{ record.transport }}</td>
 
-        <button
-          @click="changePage(currentPage + 1)"
-          :disabled="currentPage >= totalPages"
-          class="px-3 py-1 rounded-md bg-gray-100 hover:bg-gray-200 disabled:opacity-50"
-        >
-          ▶
-        </button>
-      </div>
+            <td class="p-3">
+              <button
+                @click="goToCompanyDetails(record.company_id)"
+                class="text-indigo-600 hover:underline font-medium"
+              >
+                {{ record.loading_point }}
+              </button>
+            </td>
 
-      <div ref="pdfContent">
-        <table class="w-full text-sm">
-          <thead class="bg-indigo-50 text-indigo-700 uppercase text-xs tracking-wide">
-            <tr>
-              <th class="p-3">Sem.</th>
-              <th class="p-3">Date</th>
-              <th class="p-3">Transport</th>
-              <th class="p-3">Chargement</th>
-              <th class="p-3">Chargées</th>
-              <th class="p-3">Rendues</th>
-              <th class="p-3">Dette ch.</th>
-              <th class="p-3">Transporteur</th>
-              <th class="p-3">Livraison</th>
-              <th class="p-3">Livrées</th>
-              <th class="p-3">Reprises</th>
-              <th class="p-3">Dette liv.</th>
-              <th class="p-3">Commentaire</th>
-              <th class="p-3 text-center">Actions</th>
-            </tr>
-          </thead>
+            <td class="p-3 text-center">{{ record.loaded }}</td>
+            <td class="p-3 text-center">{{ record.rendered }}</td>
 
-          <tbody>
-            <tr
-              v-for="(record, index) in paginatedRecords"
-              :key="record.id"
-              class="border-t hover:bg-indigo-50/50 transition"
-            >
-              <td class="p-3">{{ record.week }}</td>
-              <td class="p-3">{{ formatDate(record.date) }}</td>
-              <td class="p-3">{{ record.transport }}</td>
+            <td class="p-3 text-center">
+              <span
+                :class="
+                  record.loading_debt > 0 ? 'bg-red-100 text-red-700' : 'bg-gray-100 text-gray-500'
+                "
+                class="px-2 py-1 rounded-full text-xs font-semibold"
+              >
+                {{ record.loading_debt }}
+              </span>
+            </td>
 
-              <td class="p-3">
-                <button
-                  @click="goToCompanyDetails(record.company_id)"
-                  class="text-indigo-600 hover:underline font-medium"
-                >
-                  {{ record.loading_point }}
-                </button>
-              </td>
+            <td class="p-3">
+              {{ record.carrier?.company?.name || '—' }}
+            </td>
 
-              <td class="p-3 text-center">{{ record.loaded }}</td>
-              <td class="p-3 text-center">{{ record.rendered }}</td>
+            <td class="p-3">{{ record.delivery_point }}</td>
+            <td class="p-3 text-center">{{ record.delivered }}</td>
+            <td class="p-3 text-center">{{ record.returned }}</td>
 
-              <td class="p-3 text-center">
-                <span
-                  :class="record.loading_debt > 0
+            <td class="p-3 text-center">
+              <span
+                :class="
+                  record.delivery_debt > 0
                     ? 'bg-red-100 text-red-700'
-                    : 'bg-gray-100 text-gray-500'"
-                  class="px-2 py-1 rounded-full text-xs font-semibold"
-                >
-                  {{ record.loading_debt }}
-                </span>
-              </td>
+                    : 'bg-green-100 text-green-700'
+                "
+                class="px-2 py-1 rounded-full text-xs font-semibold"
+              >
+                {{ record.delivery_debt }}
+              </span>
+            </td>
 
-              <td class="p-3">
-                {{ record.carrier?.company?.name || '—' }}
-              </td>
+            <td class="p-3 text-gray-500">{{ record.comment || '—' }}</td>
 
-              <td class="p-3">{{ record.delivery_point }}</td>
-              <td class="p-3 text-center">{{ record.delivered }}</td>
-              <td class="p-3 text-center">{{ record.returned }}</td>
-
-              <td class="p-3 text-center">
-                <span
-                  :class="record.delivery_debt > 0
-                    ? 'bg-red-100 text-red-700'
-                    : 'bg-green-100 text-green-700'"
-                  class="px-2 py-1 rounded-full text-xs font-semibold"
-                >
-                  {{ record.delivery_debt }}
-                </span>
-              </td>
-
-              <td class="p-3 text-gray-500">
-                {{ record.comment || '—' }}
-              </td>
-
-              <td class="p-3 text-center">
-                <button
-                  v-if="editIndex !== index"
-                  @click="edit(index)"
-                  class="text-indigo-600 hover:underline font-medium"
-                >
-                  Modifier
-                </button>
-              </td>
-            </tr>
-          </tbody>
-        </table>
-      </div>
+            <td class="p-3 text-center">
+              <button
+                v-if="editIndex !== index"
+                @click="edit(index)"
+                class="text-indigo-600 hover:underline font-medium"
+              >
+                Modifier
+              </button>
+            </td>
+          </tr>
+        </tbody>
+      </table>
     </div>
 
-    <div
-      v-else
-      class="text-center text-gray-400 italic mt-10"
-    >
-      Aucune donnée disponible
-    </div>
+    <div v-else class="text-center text-gray-400 italic mt-10">Aucune donnée disponible</div>
   </div>
 </template>
-
 
 <script setup>
 import { ref, onMounted, computed } from 'vue'

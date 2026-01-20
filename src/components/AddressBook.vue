@@ -1,73 +1,55 @@
 <template>
-  <div class="p-6 space-y-6">
-    <h1 class="text-3xl font-bold text-gray-900">Carnet d'adresses</h1>
+  <div class="bg-white border border-gray-200 rounded-2xl shadow-xl p-8 space-y-8 max-h-[80%]">
+    <h1 class="text-3xl font-bold text-indigo-600">Carnet d'adresses</h1>
+    <p class="text-gray-500">
+      Cette page vous permet de gérer vos adresses de livraison et de livraison.
+    </p>
 
-    <div
-      v-if="connections.length"
-      class="bg-white/90 backdrop-blur-md rounded-2xl shadow-xl shadow-indigo-600/10 overflow-x-auto"
-    >
+    <div v-if="connections.length"
+      class="bg-white/90 backdrop-blur-md rounded-2xl shadow-xl shadow-indigo-600/10 overflow-x-auto">
       <table class="w-full text-sm">
-        <thead
-          class="bg-indigo-50 text-indigo-700 text-left uppercase text-xs tracking-wider"
-        >
+        <thead class="bg-indigo-50 text-indigo-700 text-left uppercase text-xs tracking-wider">
           <tr>
             <th class="p-4">Shipper</th>
             <th class="p-4">Carrier</th>
-            <th class="p-4">Recipient</th>
+            <th class="p-4">Rôle</th>
             <th class="p-4 text-center">Actions</th>
           </tr>
         </thead>
 
         <tbody>
-          <tr
-            v-for="connection in connections"
-            :key="connection.id"
-            class="border-t border-indigo-100 hover:bg-indigo-50/60 transition-colors"
-          >
+          <tr v-for="connection in connections" :key="connection.id"
+            class="border-t border-indigo-100 hover:bg-indigo-50/60 transition-colors">
+            <!-- Requester -->
             <td class="p-4">
-              <div class="font-medium text-gray-900">
-                {{ connection.shipper.email }}
-              </div>
-              <div class="text-sm text-gray-500">
-                {{ connection.shipper.company.name }}
-              </div>
+              <div class="font-medium text-gray-900">{{ connection.requester.name }}</div>
+              <div class="text-sm text-gray-500">{{ connection.requester.email || '' }}</div>
             </td>
 
+            <!-- Receiver -->
             <td class="p-4">
-              <div class="font-medium text-gray-900">
-                {{ connection.carrier.email }}
-              </div>
-              <div class="text-sm text-gray-500">
-                {{ connection.carrier.company.name }}
-              </div>
+              <div class="font-medium text-gray-900">{{ connection.receiver.name }}</div>
+              <div class="text-sm text-gray-500">{{ connection.receiver.email || '' }}</div>
             </td>
 
+            <!-- Role -->
             <td class="p-4">
-              <div class="font-medium text-gray-900">
-                {{ connection.recipient.email }}
-              </div>
-              <div class="text-sm text-gray-500">
-                {{ connection.recipient.company.name }}
-              </div>
+              <div class="font-medium text-gray-900">{{ connection.role.name }}</div>
             </td>
 
             <td class="p-4 text-center">
-              <button
-                @click="viewConnection(connection)"
-                class="bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded-lg font-medium shadow-md transition"
-              >
+              <button @click="viewConnection(connection)"
+                class="bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded-lg font-medium shadow-md transition">
                 Voir détails
               </button>
             </td>
           </tr>
         </tbody>
+
       </table>
     </div>
 
-    <div
-      v-else
-      class="text-gray-400 text-center mt-8 italic"
-    >
+    <div v-else class="text-gray-400 text-center mt-8 italic">
       Aucune connexion disponible.
     </div>
   </div>

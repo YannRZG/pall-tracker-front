@@ -1,7 +1,7 @@
 <template>
-  <div class="flex flex-col justify-center items-center min-h-[60vh] mx-auto max-w-7xl px-6 py-20">
+  <div class="flex flex-col justify-center items-center min-h-[60vh] mx-auto px-6 py-20 w-full">
     <!-- HERO -->
-    <section class="flex justify-center items-center min-h-[60vh] mx-auto max-w-7xl px-6 py-20">
+    <section class="flex justify-center items-center min-h-[60vh] mx-auto px-6 py-20 w-full">
       <div class="grid gap-16 md:grid-cols-2 items-center">
         <!-- TEXT -->
         <div class="flex flex-col space-y-8">
@@ -24,7 +24,7 @@
           <!-- CTA -->
           <div class="flex flex-wrap gap-4 pt-2">
             <RouterLink
-              to="/signup"
+              to="/signup-request"
               class="inline-flex items-center justify-center rounded-lg bg-indigo-600 px-6 py-3 text-base font-semibold text-white shadow-sm hover:bg-indigo-700"
             >
               Créer un compte
@@ -42,7 +42,7 @@
         <!-- VISUAL -->
         <div class="relative">
           <div class="absolute inset-0 rounded-2xl bg-indigo-600/10 blur-3xl"></div>
-          <div class="relative rounded-2xl border border-gray-200 bg-white p-8 shadow-lg shadow-indigo-600/20">
+          <div class="relative rounded-2xl border border-indigo-200 bg-white p-8 shadow-lg shadow-indigo-600/20">
             <ul class="space-y-4">
               <li class="flex items-center gap-3">
                 <span class="h-2 w-2 rounded-full bg-indigo-600"></span>
@@ -77,21 +77,21 @@
         </div>
 
         <div class="mt-16 grid gap-8 md:grid-cols-3">
-          <div class="relative rounded-2xl border border-gray-200 bg-white p-8 shadow-xl">
+          <div class="relative rounded-2xl border border-indigo-200 bg-white p-8 shadow-lg shadow-indigo-600/20">
             <h3 class="text-lg font-semibold text-gray-900">Simplicité</h3>
             <p class="mt-2 text-gray-600">
               Une interface claire pour enregistrer les mouvements en quelques secondes.
             </p>
           </div>
 
-          <div class="relative rounded-2xl border border-gray-200 bg-white p-8 shadow-xl">
+          <div class="relative rounded-2xl border border-indigo-200 bg-white p-8 shadow-lg shadow-indigo-600/20">
             <h3 class="text-lg font-semibold text-gray-900">Fiabilité</h3>
             <p class="mt-2 text-gray-600">
               Des soldes calculés automatiquement, sans Excel ni erreurs.
             </p>
           </div>
 
-          <div class="relative rounded-2xl border border-gray-200 bg-white p-8 shadow-xl">
+          <div class="relative rounded-2xl border border-indigo-200 bg-white p-8 shadow-lg shadow-indigo-600/20">
             <h3 class="text-lg font-semibold text-gray-900">Collaboration</h3>
             <p class="mt-2 text-gray-600">
               Donneurs d’ordre, transporteurs et destinataires sur une même plateforme.

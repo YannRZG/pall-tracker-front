@@ -1,7 +1,7 @@
 <template>
   <nav
     class="sticky top-4 z-50 mx-5 flex items-center justify-between
-           bg-gray-50 backdrop-blur-md rounded-2xl shadow-lg shadow-indigo-600/20
+           bg-gray-50 backdrop-blur-md rounded-2xl shadow-lg shadow-indigo-600/20 border border-indigo-200
            px-8 py-4"
   >
     <!-- LOGO -->

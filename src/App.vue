@@ -4,7 +4,7 @@
       <Navbar />
     </header>
 
-    <main class="relative flex-1 p-4">
+    <main class="relative flex flex-col justify-center items-center flex-1 p-4">
       <CheckAuth />
       <RouterView />
 
